@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.RoleMapper"><!--命名空间和接口一致-->
+
+    <!--把关系表和role写在一起了。关系表用户和角色，多对多-->
+    <!--新建关系也写在这里都行,传了两个参数，所以使用param1234-->
+    <insert id="saveNewUserRole">
+        INSERT INTO t_user_role (user_id,role_id) VALUES (#{param1},#{param2})
+    </insert>
+    <!--删除关系表记录-->
+    <delete id="delUserAndRole">
+        DELETE FROM t_user_role WHERE user_id = #{id}
+    </delete>
+
+    <!--根据关系表查询role，两表联查。查到的是一个集合。返回时role，默认把role的类封装-->
+    <select id="findByUserId" resultType="Role">
+        SELECT * FROM t_user_role LEFT JOIN t_role ON t_user_role.role_id = t_role.id WHERE t_user_role.user_id = #{id}
+    </select>
+
+
+    <select id="findAll" resultType="Role">
+        SELECT  * FROM t_role
+    </select>
+
+    <select id="findById" resultType="Role">
+        SELECT * FROM t_role WHERE id = #{id}
+    </select>
+
+    <!--根据userid查全部-->
+
+
+
+</mapper>

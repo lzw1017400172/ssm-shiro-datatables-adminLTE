@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--spring的容器何时启动，应该配置在监听器的init,tomcat容器启动时启动spring容器-->
+    <!--基于注解的bean管理和IOC注入，需要自动扫描。只要扫描到注解的，都会在spring容器启动时自动创建-->
+    <context:component-scan base-package="com.kaishengit">
+        <!--spring的配置文件中要扫描三个注解，才能bean管理。不包括springmvc的contorller(处理器)注解。排除，需要-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--spring的JDBC数据库访问没配置数据源，即数据库连接池。来自dbcp2的依赖-->
+    <!--扫读取config.properties文件，会自动将文件值放入spring容器。此文件只读取一次，放入spring容器中使用占位符获取，符合bean管理单例-->
+    <context:property-placeholder location="classpath:config.properties"/>
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--配置事务管理器。spring的声明事务，mybatis的sql事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--只需要注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--基于注解的声明式事务，选择事务管理器-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>

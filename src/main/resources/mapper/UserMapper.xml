@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.UserMapper"><!--命名空间和接口一致-->
+
+    <cache/>
+
+
+    <select id="findByUserName" resultType="User">
+        SELECT  * FROM t_user WHERE user_name = #{userName}
+    </select>
+
+    <sql id="selectUserAndRole">
+        select t_user.*,t_role.id as roleid,t_role.view_name,t_role.role_name from t_user
+        left join t_user_role on t_user.id = t_user_role.user_id
+        left join t_role on t_user_role.role_id = t_role.id
+    </sql>
+
+
+    <insert id="saves">
+        INSERT INTO t_user (user_name,pass_word) values
+        <foreach collection="list" item="user" separator=",">
+            (#{userName},#{passWord})
+        </foreach>
+    </insert>
+
+    <!--分页时需要查询全部的个数。有多少个数据就有多少个user。按照user显示的-->
+<!--    <select id="allCount" resultType="java.lang.Long">
+        SELECT  count(*) FROM t_user
+    </select>-->
+    <select id="allCount" resultType="java.lang.Long">
+        select count(*) FROM t_user
+    </select>
+
+    <!--通过查询关键字的总条数。只需要查user表就可以查出来总条数，但是需要关键字角色和username.所以需要t_user_role表联查，但是分页的总条数是按照user表，user是一对多，所以不能直接返回总条数，应该对user_name进行分组-->
+    <!--这样查出来的才是需要显示的总条数-->
+    <select id="countByParam" resultType="java.lang.Long">
+        select count(*) from (select * from t_user
+        left join t_user_role on t_user.id = t_user_role.user_id
+        <where>
+            <if test="roleId != null and roleId != '' ">
+                t_user_role.role_id = #{roleId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND t_user.user_name LIKE concat('%',#{userName},'%')
+            </if>
+        </where>
+        group by t_user.user_name) as t_user_user_role
+    </select>
+
+    <!--根据关键字和分页查询。返回user对象的集合。仍然要N+1，因为先分页，所以会有重复的，装到对象之后，就去除重复了，所以每页的个数就变少了-->
+    <!--首先查user表，分页，按照user表分页的不会有重复了，因为user是一对多的-->
+    <!--不能使用联查，需要好似用N+1，联查会带来user重复，条数减少。因为是先分的页，后来封装自动去除了重复-->
+    <!--需要根据关键字查，角色id和username--><!--为什么联查时要在roleId存在时存在，因为根据roleId查到的user不会重复，就不会出现数据减少。roleId不存在，通过user——name查就会查到很多重复的user。分页数据减少-->
+    <select id="findPageBySearchParam" resultMap="userPageMaps">
+        SELECT * FROM t_user
+        <if test="roleId != null and roleId != ''">
+          left JOIN t_user_role ON t_user.id = t_user_role.user_id
+        </if>
+        <where>
+            <if test="userName != null and userName != ''">
+                t_user.user_name LIKE concat('%',#{userName},'%')
+            </if>
+            <if test="roleId != null and roleId != ''">
+                and t_user_role.role_id = #{roleId}
+            </if>
+
+        </where>
+
+        limit ${page.start},${page.pageSize}
+    </select>
+
+
+
+    <!--一对多的情况下，多表联查分页是有问题的。结果会导致每页数量减少。解决办法是使用N+1单表查多个表的结果。所以数据多，开启二级缓存-->
+    <!--先查user表全部直接分页，在查另外两张表的联合查询。注入list时执行这个-->
+    <select id="findAllPage" resultMap="userPageMaps">
+          SELECT * FROM t_user limit ${start},${pageSize}
+    </select>
+    <resultMap id="userPageMaps" type="User">
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="passWord" column="pass_word"/>
+        <!--现在是用户，一对多，查到的第二张表是集合，需要用到collection-->
+        <!--多对一时，查到的第二张表是一个对象。用association那个-->
+        <collection property="roleList" ofType="Role" column="id" select="com.kaishengit.mapper.RoleMapper.findByUserId"/>
+    </resultMap>                         <!--这里clumn是将当前行的id当参数注入select。第二次是一个两表联查，用id查关系表然后查role-->
+
+    <!--配置insert,添加数据后会把取得的id返回赋给user对象。就是传进来的user对象。我们孩子接user.getid就行-->
+    <!--传过来的是对象，直接占位符写属性，因为调用get方法，需要和get方法名字一致-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user (user_name,pass_word) values (#{userName},#{passWord})
+    </insert>
+
+    <!--在mybatis配置过别名，整个实体类的包都有别名，默认是类名-->
+    <!--多表联查，查到一对多，返回user，对应集合，集合封装到user，使用collection-->
+    <select id="findById" resultMap="userMap">
+        <include refid="selectUserAndRole"/>
+        where t_user.id = #{id}
+    </select>
+    <resultMap id="userMap" type="User">
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="passWord" column="pass_word"/>
+        <collection property="roleList" ofType="Role"><!--会自动装成集合赋给roleList-->
+            <id property="id" column="roleid"/>
+            <result property="roleName" column="role_name"/>
+            <result property="viewName" column="view_name"/>
+        </collection>
+
+    </resultMap>
+
+
+    <!--查询全部user，包括对应的角色。首先查user，再查关系表。再查role表，三个左连接。因为要所有的user。并且，一个用户多个关系，多个role。一对多。返回一的，包装集合，使用collecation-->
+    <select id="findAll" resultMap="userMaps">
+        <include refid="selectUserAndRole"/>
+
+    </select>
+    <resultMap id="userMaps" type="User"><!--命名过别名，指定映射返回一的要包装集合-->
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="passWord" column="pass_word"/>
+        <collection property="roleList" ofType="Role">
+            <id property="id" column="roleid"/>
+            <result property="roleName" column="role_name"/>
+            <result property="viewName" column="view_name"/>
+        </collection>
+    </resultMap>
+
+
+    <!--设计的修改模式是，如过不修改密码框就空着。所以判断密码是否为null-->
+    <!--使用set标签，可以去末尾的逗号-->
+    <update id="update">
+        UPDATE t_user
+        <set>
+            <if test="passWord != null and passWord != '' ">
+                pass_word = #{passWord},
+            </if>
+            user_name = #{userName}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="del">
+        DELETE from t_user WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <!--springMVC的配置文件-->
+    <!--中央控制器在web.xml已经配置-->
+    <!--扫描处理器Contorller。如何实现称为处理器。没有使用继承Contorller，使用了自动扫描注解。只扫描这个注解-->
+    <context:component-scan base-package="com.kaishengit.contorller">
+        <!--只扫描contorller.include是包含。另一个是排除-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--开启高级功能-->
+    <mvc:annotation-driven/>
+    <!--使静态资源不经过中央控制器，默认全部通过。不然不能访问静态资源。报错，找不到对应的contorller-->
+    <mvc:default-servlet-handler/>
+    <!--配置视图解析器-->
+    <bean id="basedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!--如果需要上传配置上传视图解析器-->
+
+
+</beans>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--第四部配置shiro的spring配置。首先，spring的配置文件是在tomcat容器启动监听器中的初始化方法中读取的，所以tomcat启动spring容器启动
+    ，监听器通过配置，会读取这个xml就会一开始读取-->
+    
+    <!--配置需要限制的类先配置-->
+    <bean id="defaultWebSecurityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--1把第三部创建的shiroDbRelm类纳入bean管理，并且注入-->
+        <property name="realm" ref="shiroDbRelm"/><!--注入，使用注解的id为类名首字母小写-->
+        <!--需要注入缓存。为什么？因为每次点击超链接，就会去查数据库。这个人是否有访问这个的权限。这区分权限比较深入，现在还未写到。所以需要缓存-->
+        <property name="cacheManager" ref="cacheManager"/>
+        
+    </bean>    
+    <!--配置缓存，去数据库查询是否有访问此超链的权限。需要缓存-->
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"/>
+    <!--生命周期-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    
+    <!--配置过滤器。相当于手写的过滤器类-->
+    <!--id值一定要和web.xml里面配置的过滤器名字相同。要和过滤器xml对应，这个配置就是配置那个过滤器的-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="defaultWebSecurityManager"/>
+        <property name="loginUrl" value="/"/><!--被拦截后跳转的位置-->
+        <property name="successUrl" value="/home"/><!--登录成功跳转的位置-->
+        <property name="unauthorizedUrl" value="/403"/><!--没有权限给用户提示跳转的位置-->
+        <property name="filterChainDefinitions"><!--权限配置。哪些可通过匿名访问，那些必须登录访问-->
+            <!--是从上往下读的，哪个先符合就去执行哪个-->
+            <!--这里面配置的是url的权限。包含静态资源原本可以访问。还有url。jsp本身就不能被直接访问-->
+            <!--当我们使用节点shiro:hasRole在客户端限制菜单不显示时。只是隐藏了入口。不能点击到权限之外的url。但是通过手动输入url仍然可以
+            进入权限之外的jsp显示内容。解决办法：在权限配置中，使用roles[role_admin]来限制当前登录对象的角色当中一定要有role_admin没有就不让反问。有才可以访问
+            -->
+            <value>
+                /static/** = anon
+                /user/**=roles[role_admin]
+                /device/**=roles[role_admin]
+                /** = authc
+            </value>
+        </property>
+    </bean>
+    
+</beans>

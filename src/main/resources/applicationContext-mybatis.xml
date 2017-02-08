@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--mybatis配置到spring的配置文件中-->
+    <!--需要的数据源已经在spring中配置过，可以直接引用-->
+
+    <!--配置sqlsession工厂。来自mybatis包-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置别名-->
+        <property name="typeAliasesPackage" value="com.kaishengit.pojo"/>
+        <!--配置下划线to驼峰,需要在其他中配置-->
+        <property name="configuration">
+            <bean id="configuration" class="org.apache.ibatis.session.Configuration">
+                <property name="mapUnderscoreToCamelCase" value="true"/>
+            </bean>
+        </property>
+        <!--加载mapper.xml的配置文件。一个表对应一个mapper.xml和一个mapper接口-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!--来自mybatis包为了获取mapper接口的实现类对象，需要扫描，扫描之后就自动创建实现类及其对象，放入srping容器，可以直接注入-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入扫描的包-->
+        <property name="basePackage" value="com.kaishengit.mapper"/>
+    </bean>
+
+</beans>

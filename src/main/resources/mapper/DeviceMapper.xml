@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.DeviceMapper"><!--命名空间的名字和接口完全限定名一致，以及id和方法名一致，通过命名空间和id去找接口，再找方法，从而达到实现类-->
+
+    <!--已经在spring配置中，全部使用过别名-->
+
+    <!--查询总数巨量-->
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_device
+        <if test="deviceName != null and deviceName != ''">
+            WHERE name LIKE concat('%',#{deviceName},'%')
+        </if>
+    </select>
+    <!--根据datatables查询的.#自带引号，使用$不带引号。还需要模糊查询。根据name。传值键为deviceName的map。分页和排序，无论怎样都会存在。模糊查询可能为null。所以动态sql-->
+    <select id="findAllPageDaTables" resultType="Device">
+        SELECT * FROM t_device
+
+         <if test="deviceName != null and deviceName != ''">
+          WHERE name LIKE concat('%',#{deviceName},'%')
+         </if>
+         ORDER BY ${orderColumn} ${orderType} limit ${start},${length}
+    </select>
+
+
+
+    <select id="findById" resultType="Device">
+        select * from t_device WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="Device">
+        SELECT * FROM t_device
+    </select>
+
+    <insert id="save">
+        INSERT INTO t_device (name,unit,totalNum,price) values (#{name},#{unit},#{totalNum},#{price})
+    </insert>
+
+    <update id="update">
+        UPDATE t_device SET name = #{name},unit = #{unit},totalNum = #{totalNum},price = #{price} WHERE id = #{id}
+    </update>
+
+    <delete id="del">
+        DELETE FROM t_device WHERE id = #{id}
+    </delete>
+</mapper>
+
+
+<!--没有mybatis之后，通过spring的配置文件中的扫描，只要扫描过就自动实现接口，并且创建实现类对象。在容器启动时创建-->
