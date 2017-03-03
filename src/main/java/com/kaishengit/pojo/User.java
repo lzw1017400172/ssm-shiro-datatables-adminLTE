@@ -18,6 +18,7 @@ public class User implements Serializable {
     private String userName;
     private String passWord;
 
+    private String mobile;
 
     /*查询user对应的角色。一对多，返回user。需要包装集合*/
     private List<Role> roleList;
@@ -47,6 +48,13 @@ public class User implements Serializable {
                 '}';
     }
 
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     /*EL调用get。返回所有角色的字符串。每个user对应的所有viewName*/
     public String getViewNames(){

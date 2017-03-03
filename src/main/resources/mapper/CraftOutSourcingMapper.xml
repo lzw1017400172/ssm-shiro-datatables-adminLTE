@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.CraftOutSourcingMapper"><!--命名空间的名字和接口完全限定名一致，以及id和方法名一致，通过命名空间和id去找接口，再找方法，从而达到实现类-->
+
+    <cache/>
+
+    <!--添加外包合同一条.需要返回id，自动封装到对象，在添加另外两个表是需要id-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_craft_out (serial_number, company_name, company_address,
+        company_phone, link_man, link_man_phone, id_num, total_cost, pre_cost,
+        last_cost, create_time,create_user,status) VALUE (#{serialNumber},#{companyName},#{companyAddress},
+        #{companyPhone},#{linkMan},#{linkManPhone},#{idNum},#{totalCost},#{preCost},#{lastCost},#{createTime},#{createUser},
+        #{status})
+    </insert>
+
+    <!--修改，主要修改付款-->
+    <update id="update">
+        UPDATE t_craft_out SET serial_number=#{serialNumber},
+        company_name=#{companyName},company_address=#{companyAddress},
+        company_phone=#{companyPhone},link_man=#{linkMan},link_man_phone=#{linkManPhone},
+        id_num=#{idNum},create_user=#{createUser},create_time=#{createTime},status=#{status},
+        total_cost = #{totalCost},pre_cost=#{preCost},last_cost=#{lastCost} where id = #{id}
+    </update>
+
+    <!--根据流水号查合同-->
+    <select id="findBySerialNumber" resultType="com.kaishengit.pojo.CraftOutSourcing">
+        SELECT * FROM t_craft_out WHERE serial_number = #{serialNumber}
+    </select>
+
+    <!--查询全部-->
+    <select id="findAll" resultType="CraftOutSourcing">
+        SELECT * FROM t_craft_out
+    </select>
+    <!--根据关键字查询所有数据的个数--><!--mysql事件类型Timestamp有时分秒，转换形式，与比较时间-->
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_craft_out
+        <where>
+            <if test="serialNumber != null and serialNumber != ''">
+                serial_number = #{serialNumber}
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and company_name = #{companyName}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and date_format(create_time,'%Y-%m-%d') >= #{startDate}
+            </if>
+            <if test="stopDate != null and stopDate != ''">
+                <![CDATA[ and date_format(create_time,'%Y-%m-%d') <= #{stopDate} ]]>
+            </if>
+        </where>
+
+    </select>
+    <!--分页查询,按照关键字-->
+    <select id="findAllPage" resultType="CraftOutSourcing">
+         SELECT * FROM t_craft_out
+        <where>
+            <if test="serialNumber != null and serialNumber != ''">
+                serial_number = #{serialNumber}
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and company_name = #{companyName}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and date_format(create_time,'%Y-%m-%d') >= #{startDate}
+            </if>
+            <if test="stopDate != null and stopDate != ''">
+                <![CDATA[ and date_format(create_time,'%Y-%m-%d') <= #{stopDate} ]]>
+            </if>
+        </where>
+          limit ${start},${pageSize}
+    </select>
+    <select id="findById" resultType="com.kaishengit.pojo.CraftOutSourcing">
+        SELECT * FROM t_craft_out WHERE id = #{id}
+    </select>
+</mapper>

@@ -6,6 +6,7 @@ import com.kaishengit.pojo.Role;
 import com.kaishengit.pojo.User;
 import com.kaishengit.service.UserService;
 
+import com.kaishengit.service.WeiXinService;
 import com.kaishengit.utiils.Page;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,6 +30,10 @@ public class UserServiceImpl implements UserService {
 
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     /*需要使用Mapper接口实现类对象，调用sql。已经被mybtis里面扫描过所有接口，全部都创建好对象，只需要调用*/
+
+    @Autowired
+    private WeiXinService weiXinService;
+
     @Autowired
     private UserMapper userMapper;
     @Autowired
@@ -105,8 +111,9 @@ public class UserServiceImpl implements UserService {
     public void saveNewUser(User user, Integer[] roleIds) {
         //保存用户
         logger.debug("salt:"+salt);
-        //密码需要加盐
-        user.setPassWord(DigestUtils.md5Hex(salt+user.getPassWord()));
+        logger.debug("电话"+user.getMobile());
+        /*//密码需要加盐
+        user.setPassWord(DigestUtils.md5Hex(salt+user.getPassWord()));*/
         /*我们需要添加完用户的用户id，使用可以返回id的insert*/
         userMapper.save(user);
         //2保存用户和角色关系
@@ -119,10 +126,16 @@ public class UserServiceImpl implements UserService {
                     /*里面配置的insert，插入数据后，会把取得的id赋值给传进去的user，所以直接user.getid。同一片内存空间的user，*/
                 }
             }
-
-
         }
 
+        //3保存到微信，添加微信成员
+        com.kaishengit.dto.wx.User user2 = new com.kaishengit.dto.wx.User();
+        user2.setUserid(user.getId().toString());
+        user2.setName(user.getUserName());
+        user2.setMobile(user.getMobile());
+        user2.setDepartment(Arrays.asList(roleIds));//将一个数组转换成一个集合
+        //调用微信的创建用户
+        weiXinService.wxCeateUser(user2);
     }
 
     @Override

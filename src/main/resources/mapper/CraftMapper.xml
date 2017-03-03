@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.CraftMapper"><!--命名空间的名字和接口完全限定名一致，以及id和方法名一致，通过命名空间和id去找接口，再找方法，从而达到实现类-->
+
+    <cache/>
+
+    <!--修改工种，用来同步库存-->
+    <update id="update">
+        UPDATE t_craft SET name=#{name},total_num=#{totalNum},curr_num=#{currNum},price=#{price} where id = #{id}
+    </update>
+
+    <!--查询全部工种-->
+    <select id="findAll" resultType="Craft">
+        SELECT * FROM t_craft
+    </select>
+
+    <!--根据id查询工种-->
+    <select id="findById" resultType="Craft">
+        SELECT * FROM t_craft WHERE id = #{id}
+    </select>
+    <!--根据name查找-->
+    <select id="findByName" resultType="com.kaishengit.pojo.Craft">
+        SELECT * FROM t_craft WHERE name = #{name}
+    </select>
+
+
+</mapper>

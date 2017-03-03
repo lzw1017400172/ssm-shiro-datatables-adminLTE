@@ -36,8 +36,12 @@
             -->
             <value>
                 /static/** = anon
+                /weixin/init=anon
                 /user/**=roles[role_admin]
-                /device/**=roles[role_admin]
+                /setting/**=roles[role_admin]
+                /business/**=roles[role_sales]
+                /disk/**=roles[role_dev]
+                /finance/**=roles[role_fin]
                 /** = authc
             </value>
         </property>

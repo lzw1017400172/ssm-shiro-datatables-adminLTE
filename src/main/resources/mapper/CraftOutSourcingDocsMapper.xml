@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.CraftOutSourcingDocsMapper">
+
+    <cache/>
+
+    <!--批量添加文件-->
+    <insert id="saves">
+        INSERT INTO t_craft_out_docs (source_name, new_name, out_id) VALUES
+        <foreach collection="list" item="docs" separator=",">
+            (#{docs.sourceName},#{docs.newName},#{docs.outId})
+        </foreach>
+    </insert>
+    <!--根据合同id查文件-->
+    <select id="findByOutId" resultType="com.kaishengit.pojo.CraftOutSourcingDocs">
+        SELECT * FROM t_craft_out_docs where out_id=#{id}
+    </select>
+    <!--根局文件的id查询文件-->
+    <select id="findById" resultType="com.kaishengit.pojo.CraftOutSourcingDocs">
+        SELECT * FROM t_craft_out_docs where id=#{id}
+    </select>
+</mapper>

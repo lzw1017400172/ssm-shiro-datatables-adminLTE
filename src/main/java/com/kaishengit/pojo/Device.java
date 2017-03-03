@@ -11,8 +11,12 @@ public class Device implements Serializable {
     private Integer id;
     private String name;
     private String unit;
-    private Integer totalNum;
-    private Integer price;
+    private Integer totalNum; //总数
+    private Integer currNum;//库存
+    private Integer price; //单价
+
+
+
 
     @Override
     public String toString() {
@@ -22,6 +26,7 @@ public class Device implements Serializable {
                 ", unit='" + unit + '\'' +
                 ", totalNum=" + totalNum +
                 ", price=" + price +
+                ".currNum="+currNum +
                 '}';
     }
 
@@ -63,5 +68,12 @@ public class Device implements Serializable {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+    public Integer getCurrNum() {
+        return currNum;
+    }
+
+    public void setCurrNum(Integer currNum) {
+        this.currNum = currNum;
     }
 }

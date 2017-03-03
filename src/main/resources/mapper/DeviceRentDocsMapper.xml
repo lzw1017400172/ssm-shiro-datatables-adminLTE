@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.DeviceRentDocsMapper">
+
+    <cache/>
+
+    <!--批量插入文件,只传一个参数，collection必须是list-->
+    <insert id="saves">
+        INSERT INTO t_device_rent_docs (source_name, new_name, rent_id) VALUES
+        <foreach collection="list" item="deviceRentDocs" separator=",">
+            (#{deviceRentDocs.sourceName},#{deviceRentDocs.newName},#{deviceRentDocs.rentId})
+        </foreach>
+    </insert>
+
+
+    <!--根据rentId查找文件-->
+    <select id="findByRentId" resultType="DeviceRentDocs">
+        SELECT * FROM t_device_rent_docs WHERE rent_id = #{rentId}
+    </select>
+    <!--根据id查找文件-->
+    <select id="findBytId" resultType="com.kaishengit.pojo.DeviceRentDocs">
+        SELECT  * FROM t_device_rent_docs WHERE id = #{id}
+    </select>
+
+</mapper>

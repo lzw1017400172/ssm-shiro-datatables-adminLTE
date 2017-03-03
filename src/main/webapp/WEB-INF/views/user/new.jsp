@@ -51,6 +51,10 @@
                                 <label>密码(默认密码000000)</label>
                                 <input type="password" value="000000" class="form-control" name="passWord">
                             </div>
+                            <div class="form-group">
+                                <label>手机</label>
+                                <input type="text"  class="form-control" name="mobile">
+                            </div>
 
                             <div class="form-group">
                                 <label>角色</label>

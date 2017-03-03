@@ -17,9 +17,9 @@
 
 
     <insert id="saves">
-        INSERT INTO t_user (user_name,pass_word) values
+        INSERT INTO t_user (user_name,pass_word,mobile) values
         <foreach collection="list" item="user" separator=",">
-            (#{userName},#{passWord})
+            (#{userName},#{passWord},#{mobile})
         </foreach>
     </insert>
 
@@ -88,7 +88,7 @@
     <!--配置insert,添加数据后会把取得的id返回赋给user对象。就是传进来的user对象。我们孩子接user.getid就行-->
     <!--传过来的是对象，直接占位符写属性，因为调用get方法，需要和get方法名字一致-->
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_user (user_name,pass_word) values (#{userName},#{passWord})
+        INSERT INTO t_user (user_name,pass_word,mobile) values (#{userName},#{passWord},#{mobile})
     </insert>
 
     <!--在mybatis配置过别名，整个实体类的包都有别名，默认是类名-->
@@ -135,7 +135,8 @@
             <if test="passWord != null and passWord != '' ">
                 pass_word = #{passWord},
             </if>
-            user_name = #{userName}
+            user_name = #{userName},
+            mobile=#{mobile}
         </set>
         WHERE id = #{id}
     </update>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.CraftOutSourcingDetailMapper">
+
+    <cache/>
+
+    <!--合同详细，工种可以有多个，使用批量添加。循环，只有一个参数必须是list-->
+    <insert id="saves">
+        INSERT INTO t_craft_out_detail (craft_name, craft_price, craft_num, sub_total, out_id) VALUES
+        <foreach collection="list" separator="," item="craftOutSourcing">
+            (#{craftOutSourcing.craftName},#{craftOutSourcing.craftPrice},
+            #{craftOutSourcing.craftNum},#{craftOutSourcing.subTotal},#{craftOutSourcing.outId})
+        </foreach>
+
+    </insert>
+    <!--根据合同id查详情-->
+    <select id="findByOutId" resultType="com.kaishengit.pojo.CraftOutSourcingDetail">
+        SELECT * FROM t_craft_out_detail  WHERE out_id = #{id}
+    </select>
+
+</mapper>

@@ -55,7 +55,7 @@ public class ShiroDbRelm extends AuthorizingRealm {
 
 
     /**
-     * 权限认证
+     * 登录认证
      * @param authenticationToken 把username和password封装的对象，需要强转成子类对象。机制是在service调用此方法进行登录验证，如果返回null就会抛出异常，在service收到异常代表登录失败
      * @return
      * @throws AuthenticationException 在service要接受的异常

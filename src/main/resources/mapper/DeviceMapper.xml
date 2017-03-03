@@ -30,13 +30,16 @@
     <select id="findAll" resultType="Device">
         SELECT * FROM t_device
     </select>
+    <select id="findByName" resultType="com.kaishengit.pojo.Device">
+        SELECT * FROM t_device WHERE name = #{deviceName}
+    </select>
 
     <insert id="save">
-        INSERT INTO t_device (name,unit,totalNum,price) values (#{name},#{unit},#{totalNum},#{price})
+        INSERT INTO t_device (name,unit,totalNum,price,currNum) values (#{name},#{unit},#{totalNum},#{price},#{totalNum})
     </insert>
 
     <update id="update">
-        UPDATE t_device SET name = #{name},unit = #{unit},totalNum = #{totalNum},price = #{price} WHERE id = #{id}
+        UPDATE t_device SET name = #{name},unit = #{unit},totalNum = #{totalNum},price = #{price},currNum=#{currNum} WHERE id = #{id}
     </update>
 
     <delete id="del">

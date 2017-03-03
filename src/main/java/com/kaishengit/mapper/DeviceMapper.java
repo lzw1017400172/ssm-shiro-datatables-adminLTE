@@ -23,4 +23,6 @@ public interface DeviceMapper {
     List<Device> findAllPageDaTables(Map<String,Object> map);
 
     Long count(@Param("deviceName") String deviceName);
+
+    Device findByName(@Param("deviceName") String deviceName);//记住一个参数数string必须要用注解
 }

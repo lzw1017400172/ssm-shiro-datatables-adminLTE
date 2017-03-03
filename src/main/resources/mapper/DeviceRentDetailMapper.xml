@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.DeviceRentDetailMapper">
+
+    <!--开启二级缓存-->
+    <cache/>
+
+    <!--添加合同详情数据,不需要返回id,如果多个合同可以一次插入很多数据，提高性能。需要在前端和后端保证一定有合同详情的数据-->
+    <!--使用循环的时候，只有一个数据时collection一定是list-->
+    <insert id="saves">
+        INSERT INTO t_device_rent_detail (device_name, device_unit,
+        device_price, device_num, total_price, rent_id) VALUES
+        <foreach collection="list" item="deviceRentDetail" separator=",">
+            (#{deviceRentDetail.deviceName},#{deviceRentDetail.deviceUnit},#{deviceRentDetail.devicePrice},
+            #{deviceRentDetail.deviceNum},#{deviceRentDetail.totalPrice},#{deviceRentDetail.rentId})
+        </foreach>
+    </insert>
+
+    <!--根据rentId查找合同详情-->
+    <select id="findByRentId" resultType="DeviceRentDetail" >
+        SELECT * FROM t_device_rent_detail WHERE rent_id = #{rentId}
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.FinanceMapper">
+
+    <cache/>
+    <!--添加一条财务数据默认未确认-->
+    <insert id="save">
+        INSERT INTO t_finance (serial_number,
+         type, money, state, module, create_user,
+          confirm_user, confirm_date, remark,module_serial_number)
+          VALUE (#{serialNumber},#{type},#{money},
+          #{state},#{module},#{createUser},#{confirmUser},
+          #{confirmDate},#{remark},#{moduleSerialNumber})
+    </insert>
+    <!--修改-->
+    <update id="update">
+        UPDATE t_finance SET serial_number=#{serialNumber},type=#{type},money=#{money},
+        state=#{state},module=#{module},create_user=#{createUser},
+        create_date=#{createDate},confirm_user=#{confirmUser},confirm_date=#{confirmDate},
+        remark=#{remark},module_serial_number=#{moduleSerialNumber} where id = #{id}
+    </update>
+    <!--查询全部数量-->
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM t_finance
+    </select>
+    <!--分页查询-->
+    <select id="findPage" resultType="com.kaishengit.pojo.Finance">
+        SELECT * FROM t_finance  limit #{start},#{length}
+    </select>
+
+    <!--根据id查找财务流水-->
+    <select id="findById" resultType="com.kaishengit.pojo.Finance">
+         SELECT * FROM t_finance WHERE id = #{id}
+    </select>
+
+    <!--根据日期查财务日报-->
+    <select id="findByDate" resultType="com.kaishengit.pojo.Finance">
+        SELECT * FROM t_finance
+          <if test="date != null and date != ''">
+         WHERE DATE_FORMAT(create_date,'%Y-%m-%d') = #{date}
+             order by confirm_date asc,create_date desc
+          </if>
+        limit #{start},#{length}
+    </select>
+    <!--根据日期查询数量-->
+    <select id="findByDateCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM t_finance
+        <if test="date != null and date != ''">
+            WHERE DATE_FORMAT(create_date,'%Y-%m-%d') = #{date}
+        </if>
+    </select>
+
+    <select id="findByDateAll" resultType="com.kaishengit.pojo.Finance">
+        SELECT * FROM t_finance
+        <if test="date != null and date != ''">
+            WHERE DATE_FORMAT(create_date,'%Y-%m-%d') = #{date}
+            order by confirm_date asc,create_date desc
+        </if>
+    </select>
+    <!--根据月，月显示的是每天的数据。每天的收入支出是按照确认时间的。 分组查询按照日期。查询出每个月有数据的天数的个数。需要按照年月日分组-->
+    <select id="countByMonth" resultType="java.lang.Integer">
+        select count(*) from (select * from t_finance
+        <if test="date != null and date != ''">
+        where  date_format(confirm_date,'%Y-%m') = '2017-02' and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m-%d')) as t_count
+
+    </select>
+
+    <!--根据  月   查询全部-->
+    <select id="findByMonthAll" resultType="com.kaishengit.vo.Report">
+        select sum(case when type ='支出' then money else 0 end) as 'expend',
+        sum(case when type ='收入' then money else 0 end) as 'income' ,
+        date_format(confirm_date,'%Y-%m-%d') as 'date' from t_finance
+        <if test="date != null and date != ''">
+            where  date_format(confirm_date,'%Y-%m') = #{date} and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m-%d')
+    </select>
+    <!--根据 年 查全部-->
+    <select id="findByYearAll" resultType="com.kaishengit.vo.Report">
+        select sum(case when type ='支出' then money else 0 end) as 'expend',
+        sum(case when type ='收入' then money else 0 end) as 'income' ,
+        date_format(confirm_date,'%Y-%m') as 'date' from t_finance
+        <if test="date != null and date != ''">
+            where  date_format(confirm_date,'%Y') = #{date} and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m')
+    </select>
+
+
+    <select id="findByMonth" resultType="com.kaishengit.vo.Report" >
+
+        select sum(case when type ='支出' then money else 0 end) as 'expend',
+        sum(case when type ='收入' then money else 0 end) as 'income' ,
+        date_format(confirm_date,'%Y-%m-%d') as 'date' from t_finance
+        <if test="date != null and date != ''">
+            where  date_format(confirm_date,'%Y-%m') = #{date} and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m-%d')
+
+        limit ${start},#{length}
+
+    </select>
+    <!--根据年份去查，年报表，和月报表相似。不同是按年份查找，按月分组-->
+    <select id="findByYear" resultType="com.kaishengit.vo.Report">
+        select sum(case when type ='支出' then money else 0 end) as 'expend',
+        sum(case when type ='收入' then money else 0 end) as 'income' ,
+        date_format(confirm_date,'%Y-%m') as 'date' from t_finance
+        <if test="date != null and date != ''">
+            where  date_format(confirm_date,'%Y') = #{date} and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m')
+
+        limit ${start},#{length}
+    </select>
+    <!--年报需要分页查询全部数量。根据月份分组，多少个月就多少数据-->
+    <select id="countByYear" resultType="java.lang.Integer">
+        select  COUNT(*) from t_finance
+        <if test="date != null and date != ''">
+            where  date_format(confirm_date,'%Y') = #{date} and state='已确认'
+        </if>
+        group by date_format(confirm_date,'%Y-%m')
+    </select>
+
+
+</mapper>

@@ -10,12 +10,75 @@ public class Test {
 
     public static void main(String[] args) {
 
+
+
+        //文件拷贝。需要缓存区，所以适应bufferFileInputStream
+
+        //后缀stream的全是字节流。以字节为单位
+        //后缀是write,read的全是字符流，以字符为单位读取
+
         try {
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(new File("D:/x.jpg")));
+            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(new File("D:/亚淡淡.jpg")));
+
+            byte[] b = new byte[100];
+            int len = -1;
+            while ((len = inputStream.read(b)) != -1){
+                outputStream.write(b,0,len);
+            }
+            outputStream.flush();
+            inputStream.close();
+            outputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+
+
+
+       /* //对于升序数组int a[],编写折半算法找到int b 在数组a中的下标
+
+        //折半算法要b于中间元素比较，所以需要求中间元素。需要变量 int low,int high
+
+        int[] a = {1,2,3,4,5,6,7,8,9,10};
+        int b = 8;
+
+        int low = 0;//首位索引默认为0
+        int high = a.length -1;
+
+        Find find = new Find();
+        System.out.println(find.find2(low,high,b,a));*/
+
+
+
+
+
+
+        /*//使用递归实现文件夹的删除
+        Find find = new Find();
+        File file = new File("F:/d");
+        find.deleteFile(file);*/
+
+
+
+
+
+
+
+       /* try {
             //一般使用buffered线程安全的待缓存的复制
             BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream("D:/鸭蛋.png"));
             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream("E:/2.png"));
-            /*FileInputStream inputStream = new FileInputStream("D:/鸭蛋.png");
-            FileOutputStream outputStream = new FileOutputStream("E:/1.png");*/
+            *//*FileInputStream inputStream = new FileInputStream("D:/鸭蛋.png");
+            FileOutputStream outputStream = new FileOutputStream("E:/1.png");*//*
             byte[] b = new byte[100];
             int len = -1;
             while((len = inputStream.read(b))!= -1){
@@ -25,7 +88,7 @@ public class Test {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
 

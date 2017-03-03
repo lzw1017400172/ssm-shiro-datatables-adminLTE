@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.DeviceRentMapper"><!--命名空间的名字和接口完全限定名一致，以及id和方法名一致，通过命名空间和id去找接口，再找方法，从而达到实现类-->
+
+    <!--先开启二级缓存，作用于整个工厂-->
+    <cache/>
+
+    <!--返回id列的值-->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+       INSERT INTO t_device_rent
+       (company_name, link_man, card_num, tel, address, fax,
+       rent_date, back_date, total_day, total_price, pre_cost,create_time,
+        create_user,last_cost,serial_number,status) VALUES (#{companyName},#{linkMan},#{cardNum},
+        #{tel},#{address},#{fax},#{rentDate},#{backDate},#{totalDay},
+        #{totalPrice},#{preCost},#{createTime},#{createUser},#{lastCost},#{serialNumber},#{status})
+    </insert>
+
+   <!--修改合同-->
+    <update id="update">
+        UPDATE t_device_rent SET company_name=#{companyName},link_man=#{linkMan},
+        card_num=#{cardNum},tel=#{tel},address=#{address},fax=#{fax},
+        rent_date=#{rentDate},back_date=#{backDate},total_day=#{totalDay},
+        total_price=#{totalPrice},create_user=#{createUser},create_time=#{createTime},
+        pre_cost = #{preCost},last_cost=#{lastCost},serial_number=#{serialNumber},status=#{status}
+        WHERE id = #{id}
+    </update>
+    <!--增加总款，预付款和尾款的修改-->
+    <update id="updateCost">
+        UPDATE t_device_rent SET total_price = #{totalCost},
+        pre_cost = #{preCost},last_cost=#{lastCost}
+        WHERE id = #{id}
+    </update>
+
+    <!--根据序列号查询合同-->
+    <select id="findBySerialNumber" resultType="DeviceRent">
+        SELECT * FROM t_device_rent WHERE serial_number = #{serialNumber}
+    </select>
+    <!--根究id查询合同devicerent-->
+    <select id="findById" resultType="com.kaishengit.pojo.DeviceRent">
+        SELECT * FROM t_device_rent WHERE id= #{id}
+    </select>
+    <!--查询全部的devicerent，分页，默认id排序-->
+    <select id="findAll" resultType="com.kaishengit.pojo.DeviceRent">
+        SELECT * FROM t_device_rent ORDER by id ASC limit ${start},${length}
+    </select>
+    <select id="findCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_device_rent
+    </select>
+
+
+</mapper>

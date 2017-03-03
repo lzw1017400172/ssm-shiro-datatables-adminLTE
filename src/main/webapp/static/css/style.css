@@ -1,0 +1,118 @@
+
+/*字体图标样式开始*/
+@font-face {font-family: "iconfont";
+  src: url('../font/iconfont.eot?t=1458897532'); /* IE9*/
+  src: url('../font/iconfont.eot?t=1458897532#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../font/iconfont.woff?t=1458897532') format('woff'), /* chrome, firefox */
+  url('../font/iconfont.ttf?t=1458897532') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../font/iconfont.svg?t=1458897532#iconfont') format('svg'); /* iOS 4.1- */
+}
+.iconfont {
+  font-family:"iconfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-shouye:before { content: "\e600"; }
+.icon-bangzhu:before { content: "\e601"; }
+.icon-tianjia:before { content: "\e602"; }
+.icon-sousuo:before { content: "\e60f"; }
+.icon-mima:before { content: "\e603"; }
+.icon-tuichu:before { content: "\e604"; }
+.icon-caidan:before { content: "\e605"; }
+.icon-geren:before { content: "\e606"; }
+.icon-caidan01:before { content: "\e607"; }
+.icon-shanchu:before { content: "\e608"; }
+.icon-shaixuan:before { content: "\e609"; }
+.icon-caozuo:before { content: "\e60a"; }
+.icon-yonghuguanli:before { content: "\e60b"; }
+.icon-tongxunlu:before { content: "\e60c"; }
+.icon-jueseguanli:before { content: "\e60d"; }
+.icon-xiaoxi:before { content: "\e60e"; }
+/*字体图标样式结束*/
+
+/*全局样式*/
+ *{margin:0; padding:0;}
+body{background: #fff;font:14px/180% Arial, "Microsoft YaHei",Helvetica, sans-serif,Verdana; color: #585858;}
+ul, li,ol { list-style-type: none;}
+img{border:none;}
+a {color: #585858; text-decoration: none; }
+a,a:focus, a:hover, a:active {outline: 0 !important; }
+a:focus {text-decoration: none; }
+
+.clear{clear: both;}
+ol,ul{margin-bottom:0px; }
+/*公共样式*/
+.form-marginR{margin-right: 40px;}/*表单右边距*/
+
+
+
+
+
+
+
+/*中间内容样式公共*/
+.contaion-main{padding-top: 15px;}
+.screen-right{margin-right: -15px; margin-left:-5px; }
+
+/*用户管理页面样式开始*/
+.icon-small-blue02{font-size: 14px;color: #288ce2; margin-right: 5px; margin-left: 10px;}
+.screen-condition{border-bottom:1px solid #bfbfbf;padding:20px}
+.contaion-main .scd01{border-top: none;  padding:10px 20px; margin-top:-2px;}
+.contaion-main .scd0{height: 35px; line-height: 35px;}
+.screen-condition .handle a{float: left; margin-right: 20px; color: #585858;}
+.screen-condition .handle-right a{float: right; margin-right: 10px; color: #585858;}
+.form-angle{  border-radius: 0px; }
+
+
+.contain_table{margin-top: 10px; font-size: 12px; color: #585858;} 
+.table-hover-blue tr:hover{background: #288ce2; color: #fff;}
+
+.box-side{border:1px solid #bfbfbf;position: relative; z-index: 11; display: inline-block; margin: 0; line-height: 11px; min-height: 11px; min-width: 13px; font-weight: normal;}
+.th-font tr{background: #e3e3e3;font-size: 14px;}
+
+.pagetingtr{margin-top: -10px;}
+.pagetingtr .wz{float: left;}
+.paget001{margin-top: -5px; float: right;}
+.form-width{text-align: center; white-space: nowrap; vertical-align: middle; max-width: 70px; width: auto; } /*用户管理页面样式结束*/
+
+.btn-primary{
+	width:100px;
+}
+
+
+/* 公司网盘*/
+.dic{
+	width:80px;
+	height:80px;
+	background-image: url(../img/dic.png);
+	margin:0px auto;
+	background-repeat: no-repeat; 
+}
+.txt{
+	width:80px;
+	height:80px;
+	background-image: url(../img/txt.png);
+	margin:0px auto;
+	background-repeat: no-repeat; 
+}
+.fileName {
+	text-align:center;
+}
+
+.newFile{
+	
+    top: 0px;
+    left: 0px;
+    width: 86px;
+    height: 45px;
+    overflow: hidden;
+    bottom: auto;
+    right: auto;
+	margin:0px 10px;
+	border：0px;
+	text-align:center;
+	background-color:#00B7EE
+}
